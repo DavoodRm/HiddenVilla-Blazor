@@ -7,11 +7,14 @@ namespace HiddenVila_Server.Service
     {
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IConfiguration _configuration;
 
-        public FileUpload(IWebHostEnvironment webHostEnvironment, IHttpContextAccessor httpContextAccessor)
+        public FileUpload(IWebHostEnvironment webHostEnvironment,
+            IHttpContextAccessor httpContextAccessor, IConfiguration configuration)
         {
             _webHostEnvironment = webHostEnvironment;
             _httpContextAccessor = httpContextAccessor;
+            _configuration = configuration;
         }
 
         public async Task<string> UploadFile(IBrowserFile file)
@@ -33,7 +36,9 @@ namespace HiddenVila_Server.Service
 
                 await using var fs = new FileStream(path, FileMode.Create, FileAccess.Write);
                 ms.WriteTo(fs);
-                var utl = $"{_httpContextAccessor.HttpContext.Request.Scheme}://{_httpContextAccessor.HttpContext.Request.Host.Value}";
+                //not work in azure deployment
+                //var utl = $"{_httpContextAccessor.HttpContext.Request.Scheme}://{_httpContextAccessor.HttpContext.Request.Host.Value}";
+                var utl = $"{_configuration.GetValue<string>("ServerUrl")}";
                 return $"{utl}/RoomImages/{fileName}";
             }
             catch (Exception e)
