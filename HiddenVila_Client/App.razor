@@ -1,0 +1,38 @@
+﻿@using HiddenVila_Client.Pages.Authentication
+@inject NavigationManager navigationManager
+
+<Router AppAssembly="@typeof(App).Assembly">
+    <Found Context="routeData">
+        <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
+            <Authorizing>
+                <p>please wait, we are authorizing the user.</p>
+            </Authorizing>
+            <NotAuthorized>
+                <RedirectToLogin/>
+                @* @{
+                    Navigate();
+                }*@
+
+            </NotAuthorized>
+        </AuthorizeRouteView>
+        <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+    </Found>
+    <NotFound>
+        <CascadingAuthenticationState>
+        <PageTitle>Not found</PageTitle>
+        <LayoutView Layout="@typeof(MainLayout)">
+            <p role="alert">Sorry, there's nothing at this address.</p>
+        </LayoutView>
+        </CascadingAuthenticationState>
+    </NotFound>
+</Router>
+
+@code
+{
+    //void Navigate()
+    //{ 
+    //    var uri = new Uri(navigationManager.Uri);
+
+    //    navigationManager.NavigateTo($"login?returnUrl={uri.LocalPath}");
+    //}
+}

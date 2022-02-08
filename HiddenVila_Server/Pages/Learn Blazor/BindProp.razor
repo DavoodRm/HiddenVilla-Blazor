@@ -1,0 +1,118 @@
+﻿@page "/bindProp"
+@using HiddenVila_Server.Model
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
+@inject ProtectedLocalStorage localStorage
+@inject ProtectedSessionStorage sessionStorage
+
+<h2 class="bg-light border p-2">
+    First room
+</h2>
+
+<p> Room: @room.RoomName</p>
+<p> Price: @room.Price.ToString("C")</p>
+
+
+<input class="form-control" type="number" @bind-value="@room.Price" @bind-value:event="oninput" />
+    Is Active:
+<input type="checkbox" @bind="@room.IsActive" />
+
+<p> This room is @room.IsActive.ToString()</p>
+
+<span> room prop:</span>
+<select class="form-control" @bind="@SelectedProp">
+    <option>-- Select --</option>
+    @foreach (var item in room.RoomProps)
+    {
+        <option value="@item.Name">@item.Name</option>
+    }
+</select>
+<span> selected @SelectedProp</span>
+<br />
+<h2 class="bg-light border b-2">
+    Room List
+</h2>
+
+<table class="table table-dark">
+    <tbody>
+        @foreach (var item in Rooms)
+        {
+            <tr>
+                <td> <input class="form-control" type="text" @bind-value="@item.RoomName" @bind-value:event="oninput" /> </td>
+                <td> <input class="form-control" type="number" @bind-value="@item.Price" @bind-value:event="oninput" /> </td>
+                @foreach (var prop in item.RoomProps)
+                {
+                    <td>@prop.Name-@prop.Value</td>
+                }
+
+            </tr>
+        }
+    </tbody>
+</table>
+<br />
+@foreach (var item in Rooms)
+{
+    <p> @item.RoomName  Price is : @item.Price.ToString("C")</p>
+}
+<p>ProtectedBrowserStorage only work on <strong>Blazor Server</strong>  </p>
+<p> Counter value from other page (session): @counterSession</p>
+<p> Counter value from other page (local): @counterLocal</p>
+
+@code {
+
+    string SelectedProp = string.Empty;
+    List<BlazorRoom> Rooms = new List<BlazorRoom>();
+    BlazorRoom room = new BlazorRoom()
+        {
+            Id = 1,
+            IsActive = true,
+            Price = 120000,
+            RoomName = "Vila Suite",
+            RoomProps = new List<BlazorRoomProp>()
+            {
+                new BlazorRoomProp(){Id = 1,Name = "Sq Ft",Value = "100"},
+                new BlazorRoomProp(){Id = 2,Name = "Occupancy",Value = "3"},
+            }
+        };
+
+    public int counterSession { get; set; }
+    public int counterLocal { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var resultLocal = await localStorage.GetAsync<int>("counterLocal");
+        counterLocal = resultLocal.Success ? resultLocal.Value : 0;
+
+        var resultSession = await sessionStorage.GetAsync<int>("counterSession");
+        counterSession = resultSession.Success ? resultSession.Value : 0;
+
+
+
+        //base.OnInitialized();
+        Rooms.Add(
+            new BlazorRoom()
+                {
+                    Id = 201,
+                    IsActive = true,
+                    Price = 12000,
+                    RoomName = "Vila Suite One",
+                    RoomProps = new List<BlazorRoomProp>()
+                            {
+                new BlazorRoomProp(){Id = 1,Name = "Sq Ft",Value = "100"},
+                new BlazorRoomProp(){Id = 2,Name = "Occupancy",Value = "3"},
+                            }
+                });
+        Rooms.Add(
+            new BlazorRoom()
+                {
+                    Id = 202,
+                    IsActive = true,
+                    Price = 14000,
+                    RoomName = "Vila Suite Two",
+                    RoomProps = new List<BlazorRoomProp>()
+                                {
+                    new BlazorRoomProp(){Id = 1,Name = "Sq Ft",Value = "140"},
+                    new BlazorRoomProp(){Id = 2,Name = "Occupancy",Value = "3"},
+                                }
+                });
+    }
+}

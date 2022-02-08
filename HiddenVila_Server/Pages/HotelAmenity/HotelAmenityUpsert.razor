@@ -1,0 +1,108 @@
+﻿@page "/hotel-amenity/create"
+@page "/hotel-amenity/edit/{Id:int}"
+
+@inject IAmenityRepository _amenityRepository;
+@inject NavigationManager _navigationManager;
+@inject IJSRuntime jsRuntime
+@attribute [Authorize(Roles = Common.SD.Role_Admin)]
+<div class="row mt-2 mb-5">
+    <h3 class="card-title text-info mb-3 ml-3">@Title Hotel Room</h3>
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <EditForm Model="@AmenityDto" OnValidSubmit="HandleHotelUpsert">
+                    <DataAnnotationsValidator />
+
+                    <div class="mb-3">
+                        <label>Name</label>
+                        <InputText @bind-Value="AmenityDto.Name" class="form-control"></InputText>
+                        <ValidationMessage For="()=>AmenityDto.Name" />
+                    </div>
+                    <div class="mb-3">
+                        <label>Description</label>
+                        <InputTextArea @bind-Value="AmenityDto.Description" class="form-control"></InputTextArea>
+                        <ValidationMessage For="()=>AmenityDto.Description" />
+
+                    </div>
+                    <div class="mb-3">
+                        <label>Timming</label>
+                        <InputText @bind-Value="AmenityDto.Timming" class="form-control"></InputText>
+                        <ValidationMessage For="()=>AmenityDto.Timming" />
+                    </div>
+                    <div class="mb-3">
+                        <label>Icon Style</label>
+                        <InputText @bind-Value="AmenityDto.IconStyle" class="form-control"></InputText>
+                        <ValidationMessage For="()=>AmenityDto.IconStyle" />
+
+                    </div>
+                    <div class="mb-3 mt-1">
+                        <button class="btn btn-primary">@Title Room</button>
+                        <NavLink href="hotel-amenity" class="btn btn-secondary"> Back to index</NavLink>
+
+                    </div>
+                </EditForm>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@code {
+    [Parameter]
+    public int? Id { get; set; }
+
+    private HotelAmenityDTO AmenityDto { get; set; } = new HotelAmenityDTO();
+    private string Title { get; set; } = "Create";
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        if (Id != null)
+        {
+            //update
+            Title = "Update";
+            AmenityDto = await _amenityRepository.GetHotelAmenity(Id.Value);
+        }
+        else
+        {
+            //create
+            AmenityDto = new HotelAmenityDTO();
+        }
+    }
+
+    private async Task HandleHotelUpsert()
+    {
+        try
+        {
+            var existRoom = await _amenityRepository.IsSameNameAmenityAlreadyExists(AmenityDto.Name);
+            if (existRoom != null && existRoom.Id!=AmenityDto.Id)
+            {
+                await jsRuntime.ToastrError("Amenity name already exists");
+                return;
+            }
+
+
+            if (AmenityDto.Id != 0 && Title == "Update")
+            {
+                //update
+                await _amenityRepository.UpdateHotelAmenity(AmenityDto.Id, AmenityDto);
+
+                await jsRuntime.SweetAlertSuccess("Amenity updated successfully.");
+            }
+            else
+            {
+                //create
+                await _amenityRepository.CreateHotelAmenity(AmenityDto);
+                await jsRuntime.SweetAlertSuccess("Amenity created successfully.");
+            }
+
+        }
+        catch (Exception e)
+        {
+            await jsRuntime.SweetAlertError(e.Message);
+        }
+
+        _navigationManager.NavigateTo("hotel-amenity");
+    }
+
+}

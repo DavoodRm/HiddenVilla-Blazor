@@ -1,0 +1,22 @@
+﻿@*@if (IsAdmin)
+{
+    <a href="#" class="btn btn-danger">Delete</a>
+    <a href="#" class="btn btn-primary">Edit</a>
+
+   
+}*@
+@if (CascadingDemo.IsAdmin)
+{
+    <a href="#" class="btn btn-danger">Delete</a>
+    <a href="#" class="btn btn-primary">Edit</a>
+
+    <p style="color: red">@CascadingDemo.Message</p>
+}
+
+@code {
+    [CascadingParameter]
+    public bool IsAdmin { get; set; }
+
+    [CascadingParameter]
+    public CascadingDemo CascadingDemo { get; set; }
+}

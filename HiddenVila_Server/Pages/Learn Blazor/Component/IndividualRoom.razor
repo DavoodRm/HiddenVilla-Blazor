@@ -1,0 +1,42 @@
+﻿
+<div class="col-sm-6">
+    <div class="card">
+        <div class="card-body">
+            @*<input type="checkbox" @onchange="@OnChangeSelection" />*@
+            <input type="checkbox" @onchange="@OnRoomSelectionChanged" />
+            <h5 class="card-title">Room @Room.Id</h5>
+            <p class="card-text">@Room.Price.ToString("C")</p>
+            <p class="card-text">@Room.RoomName</p>
+            <input type="checkbox" @bind="@Room.IsActive" /> &nbsp; IsActive
+            <br />
+            <p>This room is @(Room.IsActive ? "Is Active" : "InActive")</p>
+            @if (Room.IsActive)
+            {
+                foreach (var prop in Room.RoomProps)
+                {
+                    <p>@prop.Name - @prop.Value</p>
+                }
+            }
+
+            <EditDeleteButton />
+
+
+        </div>
+    </div>
+</div>
+
+@code {
+    
+    [Parameter]
+    public BlazorRoom Room { get; set; }
+
+    //[Parameter] public EventCallback<ChangeEventArgs> OnChangeSelection { get; set; }
+    [Parameter] public EventCallback<bool> OnChangeSelection { get; set; }
+
+    protected async Task OnRoomSelectionChanged(ChangeEventArgs e)
+    {
+        await OnChangeSelection.InvokeAsync((bool)e.Value);
+    }
+
+
+}

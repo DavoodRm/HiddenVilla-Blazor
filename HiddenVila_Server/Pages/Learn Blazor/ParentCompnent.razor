@@ -1,0 +1,54 @@
+﻿@page "/ParentCompnent"
+
+
+<h1 class="text-danger">Parent child Component</h1>
+<CascadingValue Value="@message1ForGrandChild" Name="Message1">
+    <CascadingValue Value="@message2ForGrandChild" Name="Message2">
+        <CascadingValue Value="@LockyNumber">
+            <ChildComponent @ref="childComp"
+                Title="this title is passed as parameter from parent" 
+                OnClickBtnMethod="ShowMessage">
+                <ChildContent>
+                    Fragment 1
+                </ChildContent>
+                <DangerChildContent>
+                    danger content from parent
+                </DangerChildContent>
+            </ChildComponent>
+        </CascadingValue>
+    </CascadingValue>
+    
+</CascadingValue>
+
+
+
+<AnotherComponent placeholder="from parent"></AnotherComponent>
+
+@*<AnotherComponent InputAttribute1="@AttributeFromParent" ></AnotherComponent>*@
+
+<div class="row">
+<button class="btn btn-success" @onclick="() => childComp.ShowToastrSucces()">Click from parent and fire in child</button>
+</div>
+
+@code {
+    private ChildComponent childComp;
+
+    private string message1ForGrandChild = "message 1  ";
+    private string message2ForGrandChild = "message 2  ";
+    public int LockyNumber { get; set; } = 7;
+    //public Dictionary<string, object> AttributeFromParent { get; set; } = new Dictionary<string, object>()
+    //{
+    //    { "required", "required" },
+    //    { "placeholder", "Init Text from parent" },
+    //    { "maxlength", 10 }
+    //};
+    
+
+    
+    private string messageText = "";
+
+    private void ShowMessage(MouseEventArgs e)
+    {
+        messageText = "Blazzing text from parent";
+    }
+}

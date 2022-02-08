@@ -1,0 +1,54 @@
+﻿@page "/hotel-room-order"
+@using Radzen
+
+@inject IRoomOrderDetailsRepository _roomOrderDetailsRepository
+@inject IJSRuntime _jsRuntime
+@inject NavigationManager _navigationManager
+@if (!isLoading)
+{
+    <RadzenDataGrid AllowFiltering="true"
+                AllowColumnResize="true"
+                FilterMode="FilterMode.Advanced" AllowSorting="true"
+                PageSize="5" AllowPaging="true"
+                PagerHorizontalAlign="HorizontalAlign.Left"
+                ShowPagingSummary="true"
+                Data="@HotelRoomOrdersDetails" TItem="RoomOrderDetailsDTO" ColumnWidth="200px"
+                LogicalFilterOperator="LogicalFilterOperator.Or">
+        <Columns>
+            <RadzenDataGridColumn TItem="RoomOrderDetailsDTO" Property="Name" Filterable="false" Title="Customer Name" Frozen="true" TextAlign="TextAlign.Center" />
+            <RadzenDataGridColumn TItem="RoomOrderDetailsDTO" Property="Phone"  Title="Phone" />
+            <RadzenDataGridColumn TItem="RoomOrderDetailsDTO" Property="Email"  Title="Email" />
+            <RadzenDataGridColumn TItem="RoomOrderDetailsDTO" Property="HotelRoomDto.Name" Title="Room" />
+            <RadzenDataGridColumn TItem="RoomOrderDetailsDTO" Property="Status"  Title="Status" />
+            <RadzenDataGridColumn TItem="RoomOrderDetailsDTO" Property="CheckInDate"  Title="Check In Date">
+                <Template Context="data">
+                    @String.Format("{0:d}",data.CheckInDate)
+                </Template>
+            </RadzenDataGridColumn>
+
+            <RadzenDataGridColumn TItem="RoomOrderDetailsDTO" Property="Id" Title="">
+                <Template Context="data">
+                    <NavLink class="btn btn-primary" href="@($"hotel-room-order/details/{data.Id}")">Details</NavLink>
+                </Template>
+            </RadzenDataGridColumn>
+
+        </Columns>
+    </RadzenDataGrid>
+}
+else
+{
+    <p>loading....</p>
+}
+
+@code {
+    private IEnumerable<RoomOrderDetailsDTO> HotelRoomOrdersDetails { get; set; } = new List<RoomOrderDetailsDTO>();
+    private bool isLoading { get; set; } = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        isLoading = true;
+        HotelRoomOrdersDetails = await _roomOrderDetailsRepository.GetAllRoomOrderDetails();
+        isLoading = false;
+    }
+
+}

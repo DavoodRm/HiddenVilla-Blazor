@@ -1,0 +1,35 @@
+﻿
+<div class="col-sm-6">
+    <div class="card">
+        <div class="card-body">
+            @*<h5 class="card-title" @onclick="@OnClickAmenity">Amenities @Amenities.Id</h5>*@
+            <h5 class="card-title" @onclick="(arg)=> OnClickAmenity(arg,Amenities.Name)">Amenities @Amenities.Id</h5>
+            <p class="card-text">@Amenities.Name</p>
+            <span>@Amenities.Description</span> @Fragment1 @Fragment2
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public BlazorAmenities Amenities { get; set; }
+    [Parameter]
+    public EventCallback<string> OnSelectionAmenity { get; set; }
+
+
+    //protected async Task OnClickAmenity()
+    //{
+    //    await OnSelectionAmenity.InvokeAsync(Amenities.Name);
+    //}
+
+    protected async Task OnClickAmenity(MouseEventArgs e, string name)
+    {
+        await OnSelectionAmenity.InvokeAsync(name);
+    }
+
+    [Parameter]
+    public RenderFragment Fragment1 { get; set; }
+    [Parameter]
+    public RenderFragment Fragment2 { get; set; }
+
+}
