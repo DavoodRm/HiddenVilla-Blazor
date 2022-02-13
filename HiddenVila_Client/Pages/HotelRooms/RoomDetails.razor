@@ -6,7 +6,7 @@
 @inject IHotelRoomService hotelRoomService;
 @inject IStripePaymentService stripePaymentService
 @inject IRoomOrderDetailsService roomOrderDetailsService;
-@attribute [Authorize(Roles = SD.Role_Admin)]
+@attribute [Authorize(Roles = SD.Role_Customer)]
 @if (HotelBooking?.OrderDetails?.HotelRoomDTO?.HotelRoomImages == null)
 {
     <div class="spinner"></div>

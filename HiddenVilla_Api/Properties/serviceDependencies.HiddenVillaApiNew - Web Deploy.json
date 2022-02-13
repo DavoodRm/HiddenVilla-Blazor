@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "apis1": {
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.ApiManagement/service/HiddenVillaApiManager1111/apis/hiddenvila",
+      "type": "apis.azure"
+    }
+  }
+}

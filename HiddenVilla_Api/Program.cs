@@ -125,10 +125,15 @@ StripeConfiguration.ApiKey = builder.Configuration.GetSection("Stripe")["ApiKey"
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    //app.UseSwagger();
+    //app.UseSwaggerUI();
 }
-
+//add here to show in  azure deploy
+app.UseSwagger();
+app.UseSwaggerUI(c =>
+{
+   // c.RoutePrefix = string.Empty;
+});
 
 app.UseHttpsRedirection();
 
